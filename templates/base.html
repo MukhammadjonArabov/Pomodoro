@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Productivity System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #2f3542;
+            --background: #f1f2f6;
+            --text: #2f3542;
+            --card-bg: #ffffff;
+            --border-color: #dfe4ea;
+            --text-muted: #747d8c;
+        }
+
+        [data-theme="dark"] {
+            --background: #0f1418;
+            --text: #f1f2f6;
+            --card-bg: #1e272e;
+            --secondary: #171d21;
+            --border-color: #2f3542;
+            --text-muted: #a4b0be;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+        }
+
+        /* Sidebar for Desktop */
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 2rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar h2 {
+            color: var(--primary);
+            margin-bottom: 2.5rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .welcome-title {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        /* Premium Enhancements */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .timer-container {
+            text-align: center;
+            padding: 3rem 1rem;
+            transition: all 0.5s ease;
+        }
+
+        #timer-display {
+            font-size: 6rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+        }
+
+        .timer-status {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            color: var(--primary);
+            /* Reddish accent */
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .cycle-progress {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .cycle-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #dfe4ea;
+            transition: all 0.3s ease;
+        }
+
+        .cycle-dot.active {
+            background: var(--primary);
+            transform: scale(1.2);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Work Mode tints (only in light mode) */
+        [data-theme="light"] body.mode-work {
+            --background: #fff5f5;
+        }
+
+        /* Break Mode tints (only in light mode) */
+        [data-theme="light"] body.mode-break {
+            --background: #f0fff4;
+        }
+
+        /* Long Break Mode tints (only in light mode) */
+        [data-theme="light"] body.mode-long-break {
+            --background: #f0f7ff;
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .lang-select {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--secondary);
+            color: white;
+            justify-content: space-around;
+            padding: 0.8rem 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            opacity: 0.7;
+        }
+
+        .mobile-nav a.active {
+            color: var(--primary);
+            opacity: 1;
+        }
+
+        .mobile-nav-icon {
+            font-size: 1.4rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                padding-bottom: 70px;
+                /* Space for mobile nav */
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .language-switcher {
+                top: 1rem;
+                right: 1.5rem;
+            }
+
+            #timer-display {
+                font-size: 4rem;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10% auto;
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.2rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        .code-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 2rem 0;
+        }
+
+        .code-input {
+            width: 55px;
+            height: 70px;
+            font-size: 2rem;
+            text-align: center;
+            border: 2px solid var(--primary);
+            /* Reddish borders */
+            border-radius: 12px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 0 5px;
+        }
+
+        .code-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .tg-login-btn {
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white !important;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
+
+        .tg-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="mode-work">
+    <div class="sidebar">
+        <h2><span>🍅</span> <span data-i18n="app_name">Pomodoro</span></h2>
+        <nav>
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                <span class="nav-icon">🏠</span>
+                <span data-i18n="dashboard">Dashboard</span>
+            </a>
+            <a href="/leaderboard/" class="{% if request.path == '/leaderboard/' %}active{% endif %}">
+                <span class="nav-icon">🏆</span>
+                <span data-i18n="leaderboard">Leaderboard</span>
+            </a>
+            <a href="/stats/" class="{% if request.path == '/stats/' %}active{% endif %}">
+                <span class="nav-icon">📊</span>
+                <span data-i18n="statistics">Statistics</span>
+            </a>
+            {% if user.is_authenticated %}
+            <a href="/profile/" class="{% if request.path == '/profile/' %}active{% endif %}">
+                <span class="nav-icon">👤</span>
+                <span data-i18n="profile">Profile</span>
+            </a>
+            {% else %}
+            <a href="#" onclick="window.toggleModal(true); return false;">
+                <span class="nav-icon">👤</span>
+                <span data-i18n="profile">Profile</span>
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="language-switcher" style="display: flex; align-items: center; gap: 15px;">
+            <button id="theme-toggle" class="btn-icon"
+                style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color);">
+                <span id="theme-icon">🌙</span>
+            </button>
+            <select class="lang-select" id="lang-selector">
+                <option value="uz">UZ</option>
+                <option value="ru">RU</option>
+                <option value="en">EN</option>
+            </select>
+            {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post" id="logout-form" style="display: none;">
+                {% csrf_token %}
+            </form>
+            <button type="button" onclick="document.getElementById('logout-form').submit();"
+                class="btn btn-outline btn-sm"
+                style="padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; border: 1px solid var(--primary); color: var(--primary);"
+                data-i18n="logout_btn">Logout</button>
+            {% else %}
+            <a href="#" id="login-trigger-btn" class="btn btn-primary"
+                style="padding: 8px 20px; border-radius: 20px; font-weight: 600;" data-i18n="login_btn">Login</a>
+            {% endif %}
+        </div>
+
+        <div class="mobile-nav">
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                <span class="mobile-nav-icon">🏠</span>
+                <span data-i18n="dashboard">Dashboard</span>
+            </a>
+            <a href="/leaderboard/" class="{% if request.path == '/leaderboard/' %}active{% endif %}">
+                <span class="mobile-nav-icon">🏆</span>
+                <span data-i18n="leaderboard">Leaderboard</span>
+            </a>
+            <a href="/stats/" class="{% if request.path == '/stats/' %}active{% endif %}">
+                <span class="mobile-nav-icon">📊</span>
+                <span data-i18n="statistics">Stats</span>
+            </a>
+            <a href="/profile/" class="{% if request.path == '/profile/' %}active{% endif %}">
+                <span class="mobile-nav-icon">👤</span>
+                <span data-i18n="profile">Profile</span>
+            </a>
+            {% if not user.is_authenticated %}
+            <script>
+                document.querySelector('.mobile-nav a[href="/profile/"]').onclick = (e) => {
+                    e.preventDefault();
+                    window.toggleModal(true);
+                };
+            </script>
+            {% endif %}
+        </div>
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+    </script>
+    <!-- Telegram Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="close-modal">&times;</span>
+            <h3 data-i18n="login_title">Kirish</h3>
+            <p data-i18n="login_desc">Botga o'tib telefon raqamingizni ulashish orqali kod oling.</p>
+
+            <a href="https://t.me/{{ BOT_USERNAME }}" target="_blank" class="btn tg-login-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m22 2-7 20-4-9-9-4Z" />
+                    <path d="M22 2 11 13" />
+                </svg>
+                Telegram Bot
+            </a>
+
+            <div class="code-input-container">
+                <input type="text" maxlength="1" class="code-input">
+                <input type="text" maxlength="1" class="code-input">
+                <input type="text" maxlength="1" class="code-input">
+                <input type="text" maxlength="1" class="code-input">
+            </div>
+
+            <button id="verify-btn" class="btn btn-primary" style="width: 100%;"
+                data-i18n="verify_btn">Tasdiqlash</button>
+            <p id="auth-error" style="color: var(--primary); margin-top: 10px; display: none; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Set timezone cookie for Django middleware
+        (() => {
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            if (tz) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30 days
+                document.cookie = `django_timezone=${tz};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+            }
+        })();
+
+        const CONFIG = {
+            workTime: 25 * 60,
+            shortBreak: 5 * 60,
+            longBreak: 20 * 60,
+            cyclesBeforeLongBreak: 4
+        };
+
+        class PomodoroTimer {
+            constructor() {
+                this.timerId = null;
+                this.mode = 'work'; // work, break, long-break
+                this.cycles = 0;
+                this.isRunning = false;
+
+                this.elements = {
+                    display: document.getElementById('timer-display'),
+                    status: document.getElementById('timer-status'),
+                    startBtn: document.getElementById('start-btn'),
+                    startBtnText: document.getElementById('start-btn-text'),
+                    dots: document.querySelectorAll('.cycle-dot'),
+                    customDuration: document.getElementById('custom-duration')
+                };
+
+                this.timeLeft = this.getWorkTime();
+                this.currentSessionId = localStorage.getItem('currentSessionId');
+                this.audioCtx = null;
+            }
+
+            getWorkTime() {
+                if (this.elements.customDuration) {
+                    return parseInt(this.elements.customDuration.value || 25) * 60;
+                }
+                return CONFIG.workTime;
+            }
+
+            init() {
+                if (!this.elements.display) return;
+                this.updateDisplay();
+                this.elements.startBtn.addEventListener('click', () => this.toggle());
+                document.getElementById('reset-btn').addEventListener('click', () => this.reset());
+
+                if (this.elements.customDuration) {
+                    this.elements.customDuration.addEventListener('change', () => {
+                        if (!this.isRunning && this.mode === 'work') {
+                            this.timeLeft = this.getWorkTime();
+                            this.updateDisplay();
+                        }
+                    });
+                }
+            }
+
+            toggle() {
+                if (this.isRunning) {
+                    this.stopManually();
+                } else {
+                    this.start();
+                }
+            }
+
+            playSound(freq, type = 'sine', duration = 0.2) {
+                try {
+                    if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    osc.start();
+                    osc.stop(this.audioCtx.currentTime + duration);
+                } catch (e) { console.error("Audio error", e); }
+            }
+
+            start() {
+                if (this.isRunning) return;
+
+                const isAuthenticated = "{{ user.is_authenticated }}" === "True";
+                if (!isAuthenticated) {
+                    toggleModal(true);
+                    return;
+                }
+
+                this.playSound(660, 'sine', 0.1);
+                this.isRunning = true;
+                if (this.elements.startBtnText) {
+                    this.elements.startBtnText.textContent = window.i18n.t('btn_pause') || 'Pause';
+                }
+
+                if (this.mode === 'work' && !this.currentSessionId) {
+                    this.logSession('start');
+                }
+
+                this.timerId = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateDisplay();
+                    if (this.timeLeft <= 0) {
+                        this.handleComplete();
+                    }
+                }, 1000);
+            }
+
+            stop() {
+                this.isRunning = false;
+                clearInterval(this.timerId);
+                if (this.elements.startBtnText) {
+                    this.elements.startBtnText.textContent = window.i18n.t('btn_start') || 'Start Focus';
+                }
+            }
+
+            async stopManually() {
+                this.playSound(440, 'sine', 0.15);
+                this.stop();
+                if (this.mode === 'work' && this.currentSessionId) {
+                    await this.logSession('stop', 'stopped');
+                }
+            }
+
+            async reset() {
+                await this.stopManually();
+                this.mode = 'work';
+                this.timeLeft = this.getWorkTime();
+                this.updateUI();
+            }
+
+            updateDisplay() {
+                const mins = Math.floor(Math.max(0, this.timeLeft) / 60);
+                const secs = Math.max(0, this.timeLeft) % 60;
+                this.elements.display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                document.title = `${this.elements.display.textContent} - Pomodoro`;
+            }
+
+            updateUI() {
+                this.updateDisplay();
+                document.body.className = `mode-${this.mode}`;
+                const statusTexts = {
+                    'work': window.i18n.t('timer_focus'),
+                    'break': window.i18n.t('timer_short_break'),
+                    'long-break': window.i18n.t('timer_long_break')
+                };
+                if (this.elements.status) this.elements.status.textContent = statusTexts[this.mode];
+
+                this.elements.dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index < this.cycles);
+                });
+            }
+
+            async handleComplete() {
+                this.stop();
+                this.playSound(880, 'sine', 0.3);
+                setTimeout(() => this.playSound(1046.5, 'sine', 0.4), 150);
+                this.notify();
+
+                if (this.mode === 'work') {
+                    this.cycles++;
+                    await this.logSession('stop', 'finished');
+
+                    if (this.cycles >= CONFIG.cyclesBeforeLongBreak) {
+                        this.mode = 'long-break';
+                        this.timeLeft = CONFIG.longBreak;
+                        this.cycles = 0;
+                    } else {
+                        this.mode = 'break';
+                        this.timeLeft = CONFIG.shortBreak;
+                    }
+                } else {
+                    this.mode = 'work';
+                    this.timeLeft = this.getWorkTime();
+                }
+
+                this.updateUI();
+                alert(this.mode === 'work' ? window.i18n.t("break_finished") : window.i18n.t("pomodoro_finished"));
+            }
+
+            notify() {
+                if (Notification.permission === "granted") {
+                    new Notification("Pomodoro Update", {
+                        body: this.mode === 'work' ? "Focus session finished!" : "Break finished!"
+                    });
+                } else if (Notification.permission !== "denied") {
+                    Notification.requestPermission();
+                }
+            }
+
+            async logSession(action, statusOverride = 'finished') {
+                try {
+                    const url = action === 'start' ? '/pomodoro/start/' : `/pomodoro/stop/${this.currentSessionId}/`;
+                    const body = action === 'start' ? { duration: this.getWorkTime() / 60 } : { status: statusOverride };
+
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.getCookie('csrftoken')
+                        },
+                        body: JSON.stringify(body)
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (action === 'start') {
+                            this.currentSessionId = data.id;
+                            localStorage.setItem('currentSessionId', data.id);
+                        } else {
+                            localStorage.removeItem('currentSessionId');
+                            location.reload();
+                        }
+                    }
+                } catch (e) {
+                    console.error("API Logging failed", e);
+                }
+            }
+
+            getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        }
+
+        // I18n Manager
+        class I18n {
+            constructor() {
+                this.lang = localStorage.getItem('selected_lang') || 'uz';
+                this.translations = {};
+                this.selector = document.getElementById('lang-selector');
+            }
+
+            async init() {
+                this.selector.value = this.lang;
+                await this.loadTranslations(this.lang);
+                this.translatePage();
+
+                this.selector.addEventListener('change', async (e) => {
+                    this.lang = e.target.value;
+                    localStorage.setItem('selected_lang', this.lang);
+                    await this.loadTranslations(this.lang);
+                    this.translatePage();
+                });
+            }
+
+            async loadTranslations(lang) {
+                try {
+                    const response = await fetch(`/static/locales/${lang}.json`);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    this.translations = await response.json();
+                } catch (e) {
+                    console.error("Failed to load translations", e);
+                }
+            }
+
+            translatePage() {
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (this.translations[key]) {
+                        el.textContent = this.translations[key];
+                    }
+                });
+
+                if (window.timerInstance) {
+                    window.timerInstance.updateUI();
+                }
+            }
+
+            t(key) {
+                return this.translations[key] || key;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            window.i18n = new I18n();
+            await window.i18n.init();
+
+            const timer = new PomodoroTimer();
+            window.timerInstance = timer;
+            timer.init();
+
+            // Modal Logic
+            const modal = document.getElementById('login-modal');
+            const loginTrigger = document.getElementById('login-trigger-btn');
+            const closeModal = document.getElementById('close-modal');
+            const verifyBtn = document.getElementById('verify-btn');
+            const inputs = document.querySelectorAll('.code-input');
+            const errorEl = document.getElementById('auth-error');
+
+            // Theme Toggle Logic
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+
+            const setTheme = (theme) => {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            };
+
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            const toggleModal = (show) => {
+                modal.style.display = show ? 'block' : 'none';
+                if (show) inputs[0].focus();
+            };
+            window.toggleModal = toggleModal;
+
+            if (loginTrigger) loginTrigger.onclick = () => toggleModal(true);
+            closeModal.onclick = () => toggleModal(false);
+            window.onclick = (e) => { if (e.target == modal) toggleModal(false); };
+
+            // Code input focus management
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+            });
+
+            const getFullCode = () => Array.from(inputs).map(i => i.value).join('');
+
+            verifyBtn.onclick = async () => {
+                const code = getFullCode();
+                if (code.length !== 4) return;
+
+                verifyBtn.disabled = true;
+                errorEl.style.display = 'none';
+
+                try {
+                    const response = await fetch('/users/auth/telegram/verify/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({ code })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        errorEl.textContent = data.error || 'Xato kod';
+                        errorEl.style.display = 'block';
+                    }
+                } catch (e) {
+                    errorEl.textContent = 'Server bilan bog\'lanishda xato';
+                    errorEl.style.display = 'block';
+                } finally {
+                    verifyBtn.disabled = false;
+                }
+            };
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+    </script>
+</body>
+
+</html>

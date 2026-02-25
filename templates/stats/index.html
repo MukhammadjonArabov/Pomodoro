@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .stats-container {
+        padding: 1rem;
+    }
+
+    .period-selector {
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+        background: var(--card-bg);
+        padding: 0.5rem;
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+        width: fit-content;
+    }
+
+    .period-btn {
+        padding: 0.6rem 2rem;
+        border-radius: 50px;
+        border: none;
+        background: transparent;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text);
+    }
+
+    .period-btn.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 992px) {
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .chart-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chart-header {
+        margin-bottom: 1rem;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        border-left: 4px solid var(--primary);
+        padding-left: 10px;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        flex: 1;
+        min-height: 250px;
+        max-height: 350px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-container">
+    <div class="header-section" style="margin-bottom: 2rem;">
+        <h1 data-i18n="stats_title">Statistics</h1>
+    </div>
+
+    <div class="period-selector">
+        <button class="period-btn" data-period="day" data-i18n="period_day">Daily</button>
+        <button class="period-btn active" data-period="week" data-i18n="period_week">Weekly</button>
+        <button class="period-btn" data-period="month" data-i18n="period_month">Monthly</button>
+        <button class="period-btn" data-period="year" data-i18n="period_year">Yearly</button>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div class="chart-title" data-i18n="focus_hours_label">Focus Time (hours)</div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="focusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div class="chart-title" data-i18n="distribution_label">Distribution (%)</div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <div class="chart-title" data-i18n="sessions_count_label">Sessions Count</div>
+        </div>
+        <div class="chart-wrapper" style="max-height: 250px;">
+            <canvas id="sessionsChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    class StatsManager {
+        constructor() {
+            this.period = 'week';
+            this.charts = {
+                focus: null,
+                distribution: null,
+                sessions: null
+            };
+            this.colors = [
+                '#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#3742fa',
+                '#747d8c', '#a4b0be', '#eccc68', '#ff7f50', '#70a1ff'
+            ];
+            this.init();
+        }
+
+        init() {
+            this.loadCharts();
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.period = e.target.dataset.period;
+                    this.loadCharts();
+                });
+            });
+        }
+
+        async loadCharts() {
+            try {
+                const data = await fetch(`/stats/data/?period=${this.period}`).then(res => res.json());
+                this.renderFocusChart(data);
+                this.renderDistributionChart(data);
+                this.renderSessionsChart(data);
+            } catch (e) {
+                console.error("Failed to load chart data", e);
+            }
+        }
+
+        renderFocusChart(data) {
+            const ctx = document.getElementById('focusChart').getContext('2d');
+            if (this.charts.focus) this.charts.focus.destroy();
+
+            this.charts.focus = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: window.i18n.t('focus_hours_label'),
+                        data: data.focus_time,
+                        borderColor: '#ff4757',
+                        backgroundColor: 'rgba(255, 71, 87, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ff4757',
+                        pointRadius: 4
+                    }]
+                },
+                options: this.getOptions(false)
+            });
+        }
+
+        renderDistributionChart(data) {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            if (this.charts.distribution) this.charts.distribution.destroy();
+
+            this.charts.distribution = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.percentages,
+                        backgroundColor: this.colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10,
+                                font: { size: 10 }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        renderSessionsChart(data) {
+            const ctx = document.getElementById('sessionsChart').getContext('2d');
+            if (this.charts.sessions) this.charts.sessions.destroy();
+
+            this.charts.sessions = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: window.i18n.t('sessions_count_label'),
+                        data: data.sessions_count,
+                        backgroundColor: '#2ed573',
+                        borderRadius: 5
+                    }]
+                },
+                options: this.getOptions(false)
+            });
+        }
+
+        getOptions(showLegend) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: showLegend }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { font: { size: 10 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 10 } }
+                    }
+                }
+            };
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.statsManager = new StatsManager();
+    });
+
+    // Handle i18n
+    const originalTranslatePage = window.i18n.translatePage;
+    window.i18n.translatePage = function () {
+        originalTranslatePage.call(window.i18n);
+        if (window.statsManager) {
+            window.statsManager.loadCharts();
+        }
+    };
+</script>
+{% endblock %}
