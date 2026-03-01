@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="guide-container">
+    <div class="card welcome-card">
+        <h1 class="welcome-title" data-i18n="guide_title">Pomodoro Qo'llanmasi</h1>
+        <p class="guide-welcome-text" data-i18n="guide_welcome">Pomodoro tizimiga xush kelibsiz!</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card guide-card">
+            <div class="guide-icon">🎯</div>
+            <h3 data-i18n="guide_purpose_title">Saytning maqsadi</h3>
+            <p data-i18n="guide_purpose_desc">Ushbu platforma vaqtingizni samarali boshqarish, diqqatni jamlash va ish
+                unumdorligini oshirish uchun yaratilgan.</p>
+        </div>
+
+        <div class="card guide-card">
+            <div class="guide-icon">🍅</div>
+            <h3 data-i18n="guide_pomodoro_title">Pomodoro usuli nima?</h3>
+            <p data-i18n="guide_pomodoro_desc">Pomodoro texnikasi 1980-yillarning oxirida Franchesko Chirillo tomonidan
+                ishlab chiqilgan vaqtni boshqarish usuli hisoblanadi.</p>
+        </div>
+    </div>
+
+    <div class="card detail-card">
+        <h3 data-i18n="guide_how_it_works_title">Saytda qanday ishlaydi?</h3>
+        <div class="steps-grid">
+            <div class="step-item">
+                <span class="step-num">1</span>
+                <p data-i18n="guide_how_it_works_step1"></p>
+            </div>
+            <div class="step-item">
+                <span class="step-num">2</span>
+                <p data-i18n="guide_how_it_works_step2"></p>
+            </div>
+            <div class="step-item">
+                <span class="step-num">3</span>
+                <p data-i18n="guide_how_it_works_step3"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card detail-card">
+        <h3 data-i18n="guide_actions_title">Qanday amallar mavjud?</h3>
+        <p data-i18n="guide_actions_desc">Siz taymerni boshlashingiz, o'z statistikangizni kuzatishingiz, leaderboard
+            orqali boshqa foydalanuvchilar bilan bellashishingiz va o'z profilingizni tahrirlashingiz mumkin.</p>
+        <div class="actions-visual">
+            <span class="action-tag">🏠 Dashboard</span>
+            <span class="action-tag">🏆 Leaderboard</span>
+            <span class="action-tag">📊 Statistics</span>
+            <span class="action-tag">👤 Profile</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .guide-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding-top: 20px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .welcome-card {
+        text-align: center;
+        background: linear-gradient(135deg, var(--card-bg), rgba(255, 71, 87, 0.05));
+        border: 1px solid var(--primary);
+    }
+
+    .guide-welcome-text {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .guide-card {
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .guide-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .guide-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .detail-card {
+        margin-top: 1.5rem;
+    }
+
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 1rem;
+        background: rgba(var(--primary-rgb), 0.03);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+
+    .step-num {
+        background: var(--primary);
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: -2px;
+    }
+
+    .actions-visual {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+
+    .action-tag {
+        background: var(--background);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 1px solid var(--border-color);
+        color: var(--text);
+    }
+
+    [data-theme="dark"] .action-tag {
+        background: var(--secondary);
+    }
+</style>
+{% endblock %}

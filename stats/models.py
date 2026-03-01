@@ -10,3 +10,20 @@ class Statistic(models.Model):
 
     def __str__(self):
         return f"Stats for {self.user.username}"
+
+class FocusGameScore(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='focus_game_scores')
+    score = models.IntegerField()
+    accuracy = models.FloatField()
+    reaction_speed = models.FloatField()
+    max_combo = models.IntegerField()
+    level = models.IntegerField()
+    section = models.IntegerField()
+    focus_index = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.section}-{self.level}: {self.score}"

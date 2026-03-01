@@ -18,6 +18,7 @@ urlpatterns = [
     path('pomodoro/', include('pomodoro.urls')),
     path('profile/', user_views.profile_view, name='profile'),
     path('profile/<int:telegram_id>/', user_views.user_detail_view, name='user_detail'),
+    path('guide/', stats_views.guide_view, name='guide'),
 ]
 
 if settings.DEBUG:

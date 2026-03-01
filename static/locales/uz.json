@@ -62,5 +62,18 @@
     "status_running": "Davom etmoqda",
     "status_stopped": "To'xtatilgan",
     "status_paused": "Pauza",
-    "logout_btn": "Chiqish"
+    "logout_btn": "Chiqish",
+    "guide": "Qo'llanma",
+    "guide_title": "Pomodoro Qo'llanmasi",
+    "guide_welcome": "Pomodoro tizimiga xush kelibsiz!",
+    "guide_purpose_title": "Saytning maqsadi",
+    "guide_purpose_desc": "Ushbu platforma vaqtingizni samarali boshqarish, diqqatni jamlash va ish unumdorligini oshirish uchun yaratilgan. Biz sizga charchab qolmasdan, tartibli ishlashga yordam beramiz.",
+    "guide_pomodoro_title": "Pomodoro usuli nima?",
+    "guide_pomodoro_desc": "Pomodoro texnikasi 1980-yillarning oxirida Franchesko Chirillo tomonidan ishlab chiqilgan vaqtni boshqarish usuli hisoblanadi. Bu usul ishni qisqa tanaffuslar bilan ajratilgan (odatda 25 daqiqa) intervallarga bo'lishni nazarda tutadi.",
+    "guide_how_it_works_title": "Saytda qanday ishlaydi?",
+    "guide_how_it_works_step1": "<b>Fokus</b>: 25 daqiqa davomida faqat bitta vazifaga diqqat qiling.",
+    "guide_how_it_works_step2": "<b>Tanaffus</b>: 5 daqiqa dam oling.",
+    "guide_how_it_works_step3": "<b>Takrorlash</b>: 4 ta pomodododan so'ng uzunroq (20 daqiqa) tanaffus qiling.",
+    "guide_actions_title": "Qanday amallar mavjud?",
+    "guide_actions_desc": "Siz taymerni boshlashingiz, o'z statistikangizni kuzatishingiz, leaderboard orqali boshqa foydalanuvchilar bilan bellashishingiz va o'z profilingizni tahrirlashingiz mumkin."
 }

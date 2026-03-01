@@ -59,6 +59,9 @@ def dashboard(request):
     }
     return render(request, 'dashboard/index.html', context)
 
+def guide_view(request):
+    return render(request, 'dashboard/guide.html', {'user': request.user})
+
 def stats_index(request):
     user = User.objects.first()
     return render(request, 'stats/index.html', {'user': user, 'telegram_id': user.profile.telegram_id if user else None})

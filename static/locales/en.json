@@ -62,5 +62,18 @@
     "status_running": "Running",
     "status_stopped": "Stopped",
     "status_paused": "Paused",
-    "logout_btn": "Logout"
+    "logout_btn": "Logout",
+    "guide": "Guide",
+    "guide_title": "Pomodoro Guide",
+    "guide_welcome": "Welcome to the Pomodoro system!",
+    "guide_purpose_title": "Site Purpose",
+    "guide_purpose_desc": "This platform is designed to help you manage your time effectively, focus, and increase productivity. We help you work in an organized way without getting burned out.",
+    "guide_pomodoro_title": "What is the Pomodoro method?",
+    "guide_pomodoro_desc": "The Pomodoro Technique is a time management method developed by Francesco Cirillo in the late 1980s. The technique uses a timer to break work into intervals, typically 25 minutes in length, separated by short breaks.",
+    "guide_how_it_works_title": "How it works on the site?",
+    "guide_how_it_works_step1": "<b>Focus</b>: Focus on only one task for 25 minutes.",
+    "guide_how_it_works_step2": "<b>Break</b>: Take a 5-minute rest.",
+    "guide_how_it_works_step3": "<b>Repeat</b>: After 4 pomodoros, take a longer break (20 minutes).",
+    "guide_actions_title": "What actions are available?",
+    "guide_actions_desc": "You can start the timer, track your statistics, compete with other users via the leaderboard, and edit your profile."
 }
