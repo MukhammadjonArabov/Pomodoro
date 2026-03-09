@@ -26,21 +26,20 @@ def telegram_auth_callback(request):
     if verification and not verification.is_expired:
         return Response({
             'code': verification.code,
-            'is_new': False
+            'is_new': False,
+            'was_expired': False
         }, status=status.HTTP_200_OK)
+
+    # If it exists but is expired, or if it doesn't exist, we need a new one
+    was_expired = verification.is_expired if verification else False
+    
+    # Note: We delete any old entries to ensure fresh created_at and clean state
+    TelegramVerification.objects.filter(telegram_id=telegram_id).delete()
 
     # Generate new 4-digit code
     code = f"{random.randint(1000, 9999)}"
 
-    # Store or update verification request
-    TelegramVerification.objects.update_or_create(
-        telegram_id=telegram_id,
-        defaults={'phone_number': phone_number, 'code': code, 'is_verified': False, 'created_at': random.choice([None])} 
-    )
-    # Note: auto_now_add won't update on 'update_or_create' if just updating. 
-    # Actually, we should just delete and create if we want a fresh 'created_at'.
-    
-    TelegramVerification.objects.filter(telegram_id=telegram_id).delete()
+    # Create new verification entry
     TelegramVerification.objects.create(
         telegram_id=telegram_id,
         phone_number=phone_number,
@@ -50,7 +49,8 @@ def telegram_auth_callback(request):
 
     return Response({
         'code': code,
-        'is_new': True
+        'is_new': True,
+        'was_expired': was_expired
     }, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
