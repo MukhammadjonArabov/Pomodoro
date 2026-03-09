@@ -75,5 +75,9 @@
     "guide_how_it_works_step2": "<b>Break</b>: Take a 5-minute rest.",
     "guide_how_it_works_step3": "<b>Repeat</b>: After 4 pomodoros, take a longer break (20 minutes).",
     "guide_actions_title": "What actions are available?",
-    "guide_actions_desc": "You can start the timer, track your statistics, compete with other users via the leaderboard, and edit your profile."
+    "guide_actions_desc": "You can start the timer, track your statistics, compete with other users via the leaderboard, and edit your profile.",
+    "footer_description": "The best tool for managing your time and increasing productivity.",
+    "footer_quick_links": "Quick Links",
+    "footer_contact": "Contact",
+    "footer_all_rights": "All rights reserved."
 }
