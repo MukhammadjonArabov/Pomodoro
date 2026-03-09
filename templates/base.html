@@ -36,24 +36,113 @@
             min-height: 100vh;
         }
 
-        /* Sidebar for Desktop */
+        /* Header / Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            background: var(--background);
+            z-index: 900;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-logo {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 10px;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--primary);
+        }
+
+        /* Sidebar Overlay System */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1500;
+            animation: fadeIn 0.3s ease;
+        }
+
         .sidebar {
-            width: 250px;
+            width: 280px;
             background-color: var(--secondary);
             color: white;
             padding: 2rem;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: -320px;
+            height: 100vh;
+            z-index: 2000;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            transform: translateX(320px);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
         }
 
         .sidebar h2 {
             color: var(--primary);
-            margin-bottom: 2.5rem;
+            margin: 0;
             font-size: 1.8rem;
             font-weight: 800;
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+
+        #close-menu {
+            color: white;
+            font-size: 2rem;
         }
 
         .sidebar nav {
@@ -68,7 +157,7 @@
             gap: 12px;
             color: white;
             text-decoration: none;
-            padding: 0.8rem 1rem;
+            padding: 1rem;
             font-weight: 600;
             border-radius: 12px;
             transition: all 0.3s ease;
@@ -78,6 +167,7 @@
         .sidebar nav a.active {
             background: rgba(255, 71, 87, 0.1);
             color: var(--primary);
+            padding-left: 1.5rem;
         }
 
         .nav-icon {
@@ -86,60 +176,92 @@
 
         .main-content {
             flex: 1;
-            padding: 2rem;
+            padding: 0 2rem 2rem 2rem;
             max-width: 1200px;
             width: 100%;
             box-sizing: border-box;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-        }
-
-        /* Footer Styles */
-        .footer {
-            margin-top: auto;
-            padding: 3rem 0 1.5rem 0;
-            border-top: 1px solid var(--border-color);
-            background: var(--card-bg);
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            max-width: 1100px;
             margin: 0 auto;
-            padding: 0 1rem;
         }
 
-        .footer-section h3 {
-            font-size: 1.5rem;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                margin-bottom: 1rem;
+            }
+
+            .main-content {
+                padding: 0 1rem 70px 1rem;
+            }
+
+            .mobile-logo span:last-child {
+                display: none;
+                /* Hide 'Pomodoro' text on very small screens if needed */
+            }
+        }
+
+        /* Footer Styles Revised */
+        .footer {
+            margin-top: 4rem;
+            padding: 4rem 0 2rem 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .brand-section h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .brand-section p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1rem;
+            max-width: 350px;
         }
 
         .footer-section h4 {
             color: var(--primary);
-            margin-bottom: 1.2rem;
             font-size: 1.1rem;
             font-weight: 700;
-        }
-
-        .footer-section p {
-            color: var(--text-muted);
-            line-height: 1.6;
-            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .footer-section ul {
             list-style: none;
             padding: 0;
-            margin: 0;
         }
 
         .footer-section ul li {
@@ -149,56 +271,119 @@
         .footer-section ul li a {
             color: var(--text-muted);
             text-decoration: none;
-            transition: color 0.3s ease;
-            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .footer-section ul li a:hover {
             color: var(--primary);
+            padding-left: 5px;
         }
 
         .footer-social {
             display: flex;
-            gap: 1rem;
+            gap: 12px;
         }
 
-        .social-icon {
+        .social-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(255, 71, 87, 0.1);
-            color: var(--primary);
-            transition: all 0.3s ease;
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            background: var(--background);
+            border: 1px solid var(--border-color);
+            color: var(--text);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
         }
 
-        .social-icon:hover {
+        .social-btn:hover {
+            transform: translateY(-5px);
             background: var(--primary);
             color: white;
-            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2);
+        }
+
+        .footer-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-color), transparent);
+            margin-bottom: 2rem;
         }
 
         .footer-bottom {
             text-align: center;
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
 
-        @media (max-width: 768px) {
-            .footer-content {
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 15px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3);
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 71, 87, 0.4);
+        }
+
+        @media (max-width: 900px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .brand-section {
+                grid-column: span 2;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .brand-section p {
+                max-width: 500px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .footer-grid {
                 grid-template-columns: 1fr;
                 text-align: center;
             }
 
-            .footer-section h3,
+            .brand-section {
+                grid-column: span 1;
+            }
+
             .footer-social {
                 justify-content: center;
+            }
+
+            .back-to-top {
+                bottom: 80px;
+                /* Adjust for mobile nav */
+                right: 20px;
+                width: 40px;
+                height: 40px;
             }
         }
 
@@ -613,8 +798,13 @@
 </head>
 
 <body class="mode-work">
-    <div class="sidebar">
-        <h2><span>🍅</span> <span data-i18n="app_name">Pomodoro</span></h2>
+    <div id="sidebar-overlay" class="overlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><span>🍅</span> <span data-i18n="app_name">Pomodoro</span></h2>
+            <button id="close-menu" class="btn-icon">&times;</button>
+        </div>
         <nav>
             <a href="/" class="{% if request.path == '/' %}active{% endif %}">
                 <span class="nav-icon">🏠</span>
@@ -647,62 +837,65 @@
     </div>
 
     <div class="main-content">
-        <div class="language-switcher" style="display: flex; align-items: center; gap: 15px;">
-            <button id="theme-toggle" class="btn-icon"
-                style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;">
-                <svg id="theme-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="display: none;">
-                    <circle cx="12" cy="12" r="5" />
-                    <line x1="12" y1="1" x2="12" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="23" />
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                    <line x1="1" y1="12" x2="3" y2="12" />
-                    <line x1="21" y1="12" x2="23" y2="12" />
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </svg>
-                <svg id="theme-moon" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    style="display: none;">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-            </button>
-            {% if user.is_authenticated %}
-            <form action="{% url 'logout' %}" method="post" id="logout-form" style="display: none;">
-                {% csrf_token %}
-            </form>
-            <button type="button" onclick="document.getElementById('logout-form').submit();"
-                class="btn btn-outline btn-sm"
-                style="padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; border: 1px solid var(--primary); color: var(--primary);"
-                data-i18n="logout_btn">Logout</button>
-            {% else %}
-            <a href="#" id="login-trigger-btn" class="btn btn-primary"
-                style="padding: 8px 20px; border-radius: 20px; font-weight: 600;" data-i18n="login_btn">Login</a>
-            {% endif %}
-            <div class="custom-dropdown" id="lang-dropdown">
-                <div class="dropdown-selected">
-                    <img src="https://flagcdn.com/w20/uz.png" class="flag-icon" id="current-flag">
-                    <span id="current-lang-text">UZ</span>
-                    <span class="dropdown-arrow">▼</span>
-                </div>
-                <div class="dropdown-options">
-                    <div class="dropdown-option" data-value="uz">
-                        <img src="https://flagcdn.com/w20/uz.png" class="flag-icon">
-                        <span>O'zbekcha</span>
+        <div class="top-bar">
+            <div class="logo-area">
+                <button id="menu-toggle" class="btn-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h2 class="mobile-logo"><span>🍅</span> <span data-i18n="app_name">Pomodoro</span></h2>
+            </div>
+
+            <div class="header-actions">
+                <button id="theme-toggle" class="btn-icon">
+                    <svg id="theme-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" style="display: none;">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                    <svg id="theme-moon" xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" style="display: none;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                </button>
+                {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" id="logout-form" style="display: none;">{% csrf_token %}
+                </form>
+                <button type="button" onclick="document.getElementById('logout-form').submit();"
+                    class="btn btn-outline btn-sm" data-i18n="logout_btn">Logout</button>
+                {% else %}
+                <a href="#" id="login-trigger-btn" class="btn btn-primary" data-i18n="login_btn">Login</a>
+                {% endif %}
+                <div class="custom-dropdown" id="lang-dropdown">
+                    <div class="dropdown-selected">
+                        <img src="https://flagcdn.com/w20/uz.png" class="flag-icon" id="current-flag">
+                        <span id="current-lang-text">UZ</span>
+                        <span class="dropdown-arrow">▼</span>
                     </div>
-                    <div class="dropdown-option" data-value="ru">
-                        <img src="https://flagcdn.com/w20/ru.png" class="flag-icon">
-                        <span>Русский</span>
-                    </div>
-                    <div class="dropdown-option" data-value="en">
-                        <img src="https://flagcdn.com/w20/us.png" class="flag-icon">
-                        <span>English</span>
+                    <div class="dropdown-options">
+                        <div class="dropdown-option" data-value="uz"><img src="https://flagcdn.com/w20/uz.png"
+                                class="flag-icon"><span>O'zbekcha</span></div>
+                        <div class="dropdown-option" data-value="ru"><img src="https://flagcdn.com/w20/ru.png"
+                                class="flag-icon"><span>Русский</span></div>
+                        <div class="dropdown-option" data-value="en"><img src="https://flagcdn.com/w20/us.png"
+                                class="flag-icon"><span>English</span></div>
                     </div>
                 </div>
             </div>
-            <!-- Hidden original selector for compatibility with existing JS -->
+            <!-- Hidden original selector -->
             <select id="lang-selector" style="display: none;">
                 <option value="uz">UZ</option>
                 <option value="ru">RU</option>
@@ -743,44 +936,61 @@
 
         {% block content %}{% endblock %}
 
+        <button id="back-to-top" class="btn-icon back-to-top">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+        </button>
+
         <!-- Footer -->
         <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3><span>🍅</span> <span data-i18n="app_name">Pomodoro</span></h3>
-                    <p data-i18n="footer_description">Vaqtingizni boshqarish va unumdorligingizni oshirish uchun eng
-                        yaxshi vosita.</p>
-                </div>
-                <div class="footer-section">
-                    <h4 data-i18n="footer_quick_links">Tezkor havolalar</h4>
-                    <ul>
-                        <li><a href="/" data-i18n="dashboard">Dashboard</a></li>
-                        <li><a href="/leaderboard/" data-i18n="leaderboard">Leaderboard</a></li>
-                        <li><a href="/stats/" data-i18n="statistics">Statistics</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4 data-i18n="footer_contact">Aloqa</h4>
-                    <div class="footer-social">
-                        <a href="https://t.me/Muhammadjon_Arabov" target="_blank" class="social-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m22 2-7 20-4-9-9-4Z" />
-                                <path d="M22 2 11 13" />
-                            </svg>
-                        </a>
-                        <a href="mailto:mukhammadjonarabov@gmail.com" class="social-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                <polyline points="22,6 12,13 2,6" />
-                            </svg>
-                        </a>
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-section brand-section">
+                        <h3><span>🍅</span> <span data-i18n="app_name">Pomodoro</span></h3>
+                        <p data-i18n="footer_description">Vaqtingizni boshqarish va unumdorligingizni oshirish uchun eng
+                            yaxshi vosita.</p>
+                    </div>
+
+                    <div class="footer-section links-section">
+                        <h4 data-i18n="footer_quick_links">Tezkor havolalar</h4>
+                        <ul>
+                            <li><a href="/" data-i18n="dashboard">Dashboard</a></li>
+                            <li><a href="/leaderboard/" data-i18n="leaderboard">Leaderboard</a></li>
+                            <li><a href="/stats/" data-i18n="statistics">Statistics</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section contact-section">
+                        <h4 data-i18n="footer_contact">Aloqa</h4>
+                        <div class="footer-social">
+                            <a href="https://t.me/Muhammadjon_Arabov" target="_blank" class="social-btn telegram"
+                                aria-label="Telegram">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m22 2-7 20-4-9-9-4Z" />
+                                    <path d="M22 2 11 13" />
+                                </svg>
+                            </a>
+                            <a href="mailto:mukhammadjonarabov@gmail.com" class="social-btn email" aria-label="Email">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Pomodoro. <span data-i18n="footer_all_rights">Barcha huquqlar himoyalangan.</span></p>
+
+                <div class="footer-divider"></div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Pomodoro. <span data-i18n="footer_all_rights">Barcha huquqlar himoyalangan.</span>
+                    </p>
+                </div>
             </div>
         </footer>
     </div>
@@ -1267,6 +1477,42 @@
                 }
                 return cookieValue;
             }
+            // Hamburger Menu Logic
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const menuToggle = document.getElementById('menu-toggle');
+            const closeMenu = document.getElementById('close-menu');
+
+            const toggleSidebar = (show) => {
+                if (show) {
+                    sidebar.classList.add('active');
+                    overlay.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    sidebar.classList.remove('active');
+                    overlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            };
+
+            if (menuToggle) menuToggle.onclick = () => toggleSidebar(true);
+            if (closeMenu) closeMenu.onclick = () => toggleSidebar(false);
+            if (overlay) overlay.onclick = () => toggleSidebar(false);
+
+            // Close menu on link click
+            sidebar.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', () => toggleSidebar(false));
+            });
+            // Back to Top Logic
+            const backToTop = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTop.style.display = 'flex';
+                } else {
+                    backToTop.style.display = 'none';
+                }
+            });
+            backToTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
 </body>

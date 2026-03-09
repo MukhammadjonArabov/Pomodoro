@@ -21,6 +21,7 @@
         align-items: center;
         /* Center-align children */
         text-align: center;
+        position: relative;
     }
 
     .profile-header {
@@ -31,7 +32,7 @@
         gap: 1.5rem;
         margin-bottom: 2.5rem;
         padding-bottom: 2rem;
-        border-bottom: 1px solid #f1f2f6;
+        border-bottom: 1px solid var(--border-color);
         width: 100%;
     }
 
@@ -60,7 +61,7 @@
 
     .user-info p {
         margin: 0.3rem 0;
-        color: #a4b0be;
+        color: var(--text-muted);
         font-size: 1rem;
         font-weight: 500;
     }
@@ -80,29 +81,31 @@
     .edit-form {
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 1.5rem;
         width: 100%;
-        max-width: 400px;
-        /* Narrower form width */
+        margin: 2rem 0;
     }
 
     .form-group {
         display: flex;
         flex-direction: column;
         gap: 0.6rem;
+        width: 100%;
+        max-width: 440px;
+        /* Centered block width */
         text-align: left;
-        /* Keep labels left-aligned relative to inputs */
     }
 
     .form-group label {
         font-weight: 700;
-        color: var(--secondary);
+        color: var(--text);
         font-size: 0.95rem;
-        padding-left: 4px;
+        padding-left: 5px;
     }
 
     .form-group label.red-label {
-        color: #ff4757;
+        color: var(--primary);
     }
 
     .form-control {
@@ -116,6 +119,8 @@
         background: var(--bg-color);
         color: var(--text);
         font-family: inherit;
+        text-align: left;
+        box-sizing: border-box;
     }
 
     .form-control:focus {
@@ -214,7 +219,7 @@
     }
 
     .stat-label {
-        color: #8c96a3;
+        color: var(--text-muted);
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -227,7 +232,8 @@
 <div class="profile-container">
     <div class="profile-card">
         <div class="profile-header">
-            <div class="avatar-circle" style="background: none; border: 2px solid #f1f2f6; overflow: hidden;">
+            <div class="avatar-circle"
+                style="background: none; border: 2px solid var(--border-color); overflow: hidden;">
                 {% if profile.avatar %}
                 <img src="{{ profile.avatar.url }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                 {% else %}
