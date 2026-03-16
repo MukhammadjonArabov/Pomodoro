@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -160,3 +161,70 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Jazzmin settings
+JAZZMIN_SETTINGS = {
+    # title of the window (Will default to current_admin_site.site_title if absent or None)
+    "site_title": "Pomodoro Admin",
+
+    # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_header": "Pomodoro",
+
+    # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
+    "site_brand": "Pomodoro",
+
+    # Welcome text on the login screen
+    "welcome_sign": "Pomodoro loyihasining admin paneliga xush kelibsiz",
+
+    # Copyright on the footer
+    "copyright": "Pomodoro Project",
+
+    # The model admin to search from the search bar, search bar omitted if excluded
+    # "search_model": "auth.User",
+
+    # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
+    "user_avatar": None,
+
+    ############
+    # Top Menu #
+    ############
+
+    # Links to put along the top menu
+    "topmenu_links": [
+        # Url that gets reversed (Permissions can be added)
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+
+        # model admin to link to (Permissions checked against model)
+        {"model": "auth.User"},
+    ],
+
+    #############
+    # UI Tweaks #
+    #############
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    
+    # Hide these apps when generating side menu e.g (auth)
+    "hide_apps": [],
+
+    # Hide these models when generating side menu (e.g auth.user)
+    "hide_models": [],
+
+    # Custom icons for side menu apps/models See https://fontawesome.com/icons?d=gallery&m=free&v=5.0.0,5.0.1,5.0.10,5.0.11,5.0.12,5.0.13,5.0.2,5.0.3,5.0.4,5.0.5,5.0.6,5.0.7,5.0.8,5.0.9,5.1.0,5.1.1,5.2.0,5.3.0,5.3.1,5.4.0,5.4.1,5.4.2,5.13.0,5.12.0,5.11.2,5.11.1,5.10.0,5.9.0,5.8.2,5.8.1,5.7.2,5.7.1,5.7.0,5.6.3,5.5.0,5.4.2
+    # for the full list of 5.13.0 free icon classes
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "users.User": "fas fa-user",
+        "users.Profile": "fas fa-id-card",
+        "pomodoro.PomodoroSession": "fas fa-clock",
+        "training.Training": "fas fa-dumbbell",
+        "leaderboard.Leaderboard": "fas fa-medal",
+    },
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "slate",
+    "dark_mode_theme": "darkly",
+}
